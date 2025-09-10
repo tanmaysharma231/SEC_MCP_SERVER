@@ -1,0 +1,10 @@
+mcp
+httpx
+pydantic
+tenacity
+aiolimiter
+uvloop; sys_platform != "win32"
+selectolax
+rapidfuzz
+
+

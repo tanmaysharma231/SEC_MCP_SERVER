@@ -1,0 +1,94 @@
+{
+  "name": "sec-mcp",
+  "version": "0.1.0",
+  "description": "MCP server exposing SEC/EDGAR data for LLMs",
+  "capabilities": {
+    "tools": true
+  },
+  "tools": [
+    {
+      "name": "find_company",
+      "description": "Resolve a ticker, company name, or CIK to canonical company metadata",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string", "description": "Ticker, company name, or CIK" }
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "search_filings",
+      "description": "Search filings for a company",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "cik": { "type": "string" },
+          "form_types": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Examples: 10-K, 10-Q, 8-K, 13F, 13D, 13G, 4"
+          },
+          "start_date": { "type": "string", "description": "YYYY-MM-DD", "nullable": true },
+          "end_date": { "type": "string", "description": "YYYY-MM-DD", "nullable": true },
+          "limit": { "type": "integer", "default": 10 }
+        },
+        "required": ["cik", "form_types"]
+      }
+    },
+    {
+      "name": "get_financials",
+      "description": "Return structured XBRL financials snapshot",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "cik": { "type": "string" },
+          "period": { "type": "string", "description": "Examples: FY2023, Q1 2024" }
+        },
+        "required": ["cik", "period"]
+      }
+    }
+    ,
+    {
+      "name": "get_filing_text",
+      "description": "Return raw text and provenance for a filing by accession",
+      "input_schema": {
+        "type": "object",
+        "properties": { "accession": { "type": "string" } },
+        "required": ["accession"]
+      }
+    }
+    ,
+    {
+      "name": "get_sections",
+      "description": "Return selected sections for a 10-K or 10-Q filing",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "accession": { "type": "string" },
+          "sections": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["MDA", "RiskFactors", "Business", "Footnotes"] }
+          }
+        },
+        "required": ["accession"]
+      }
+    }
+    ,
+    {
+      "name": "diff_last_two",
+      "description": "Diff the requested section across the last two filings of a form",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "cik_or_ticker": { "type": "string" },
+          "form": { "type": "string", "enum": ["10-K", "10-Q"] },
+          "section": { "type": "string", "enum": ["MDA", "RiskFactors"] }
+        },
+        "required": ["cik_or_ticker", "form", "section"]
+      }
+    }
+  ]
+}
+
+
